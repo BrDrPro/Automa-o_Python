@@ -8,10 +8,18 @@ driver.get(URL)
 driver.maximize_window()
 # table = driver.execute_script("""return document.querySelector("#high > tbody").innerText""")
 # print(table)
+
+driver.execute_script("""
+    as = document.querySelector("#high > tbody").querySelectorAll('a')
+    as.forEach(
+        (x)=>{x.setAttribute("target","_blank")}
+    )
+""")
+
 table = driver.find_element(by='css selector',value="#high > tbody")
 rows = table.find_elements(by='css selector',value='tr')
+
 for row in rows:
     link = row.find_element(by='css selector',value='a')
-    link.__setattr__('target','_blank')
     link.click()
-    time.sleep(5)
+    time.sleep(10)
