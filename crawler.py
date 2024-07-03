@@ -1,6 +1,11 @@
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 import time
+import sqlite3
+
+db = sqlite3.connect('database.sqlite')
+
+cursor = db.cursor()
 
 options = webdriver.ChromeOptions()
 options.add_argument('--disable-notifications')
@@ -52,12 +57,15 @@ for row in rows:
 
     table_dict = {}
     Upper_table = driver.find_element(by='css selector',value="#header-quotes > div.tables > table:nth-child(1) > tbody")
-    Upper_rows = Upper_table.find_elements(by='css selector',value='tr')
-    for upper_row in Upper_rows:
+    Upper_table_rows = Upper_table.find_elements(by='css selector',value='tr')
+    for upper_row in Upper_table_rows:
         key = upper_row.find_elements(by='css selector',value='td')[0].text
         value = upper_row.find_elements(by='css selector',value='td')[1].text
         table_dict[key] = value
     print(table_dict)
+
+    cursor.execute('''insert into ativos (details) values (?)''', (str(table_dict),))
+    db.commit()
 
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
