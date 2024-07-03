@@ -27,19 +27,38 @@ rows = table.find_elements(by='css selector',value='tr')
 iframe = driver.find_element(by='tag name',value='iframe')
 driver.switch_to.frame(iframe)
 
+time.sleep(5)
+
 driver.execute_script("""
     document.querySelector('[id="fechar"]').click()
 """)
 
 driver.switch_to.default_content()
 
-driver.execute_script("""
-    document.querySelector("body > cookies-policy").shadowRoot.querySelector("soma-context > cookies-policy-disclaimer > div > soma-card > div > div.uWq1-disclaimer-button-wrapper > soma-button.uWq1-disclaimer-button.soma-button.secondary.md.inverse.hydrated").shadowRoot.querySelector("button").click()
-""")
+try: 
+    driver.execute_script("""
+        document.querySelector("body > cookies-policy").shadowRoot.querySelector("soma-context > cookies-policy-disclaimer > div > soma-card > div > div.uWq1-disclaimer-button-wrapper > soma-button.uWq1-disclaimer-button.soma-button.secondary.md.inverse.hydrated").shadowRoot.querySelector("button").click()
+    """)
+except Exception as e: 
+    pass
 
 actions = ActionChains(driver)
 
 for row in rows:
     link = row.find_element(by='css selector',value='a')    
     actions.move_to_element(link).click().perform()
-    time.sleep(10)
+    driver.switch_to.window(driver.window_handles[1])
+    print(driver.current_url)
+
+    table_dict = {}
+    Upper_table = driver.find_element(by='css selector',value="#header-quotes > div.tables > table:nth-child(1) > tbody")
+    Upper_rows = Upper_table.find_elements(by='css selector',value='tr')
+    for upper_row in Upper_rows:
+        key = upper_row.find_elements(by='css selector',value='td')[0].text
+        value = upper_row.find_elements(by='css selector',value='td')[1].text
+        table_dict[key] = value
+    print(table_dict)
+
+    driver.close()
+    driver.switch_to.window(driver.window_handles[0])
+    time.sleep(5)
