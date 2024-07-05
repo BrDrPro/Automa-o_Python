@@ -58,9 +58,16 @@ for row in rows:
     table_dict = {}
     Upper_table = driver.find_element(by='css selector',value="#header-quotes > div.tables > table:nth-child(1) > tbody")
     Upper_table_rows = Upper_table.find_elements(by='css selector',value='tr')
-    for upper_row in Upper_table_rows:
-        key = upper_row.find_elements(by='css selector',value='td')[0].text
-        value = upper_row.find_elements(by='css selector',value='td')[1].text
+    for upper_table_row in Upper_table_rows:
+        key = upper_table_row.find_elements(by='css selector',value='td')[0].text
+        value = upper_table_row.find_elements(by='css selector',value='td')[1].text
+        table_dict[key] = value
+
+    Lower_table = driver.find_element(by='css selector',value="#header-quotes > div.tables > table:nth-child(2) > tbody")
+    Lower_table_rows = Lower_table.find_elements(by='css selector',value='tr')
+    for lower_table_row in Lower_table_rows:
+        key = lower_table_row.find_elements(by='css selector',value='td')[0].text
+        value = lower_table_row.find_elements(by='css selector',value='td')[1].text
         table_dict[key] = value
     print(table_dict)
 
