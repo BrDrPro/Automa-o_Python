@@ -2,6 +2,10 @@ from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 import sqlite3
+import json
+
+# adicionar nome dos ativos no JSON
+# tentar fazer a conversao dos ativos para numeros
 
 db = sqlite3.connect('database.sqlite')
 
@@ -33,10 +37,12 @@ iframe = driver.find_element(by='tag name',value='iframe')
 driver.switch_to.frame(iframe)
 
 time.sleep(5)
-
-driver.execute_script("""
-    document.querySelector('[id="fechar"]').click()
-""")
+try:
+    driver.execute_script("""
+        document.querySelector('[id="fechar"]').click()
+    """)
+except Exception as e:
+    pass
 
 driver.switch_to.default_content()
 
@@ -71,7 +77,8 @@ for row in rows:
         table_dict[key] = value
     print(table_dict)
 
-    cursor.execute('''insert into ativos (details) values (?)''', (str(table_dict),))
+    cursor.execute('''
+        insert or replace into ativos (details, last_update) values (?, datetime("now", "localtime"))''', (json.dumps(table_dict),))
     db.commit()
 
     driver.close()
